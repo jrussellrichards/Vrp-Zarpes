@@ -107,6 +107,9 @@ class vehicle:
 		route_aux_2.append(client)
 		route_aux_2,distance_route_aux_2 = tsp(route_aux_2)
 		cost = distance_route_aux_2 - self.distance_route
+		if(distance_route_aux_2>15):
+			cost=9000
+		print("costo:",cost)
 		print("se calcula para el vehiculo",self.code)
 		print("route_aux_2",route_aux_2,"distancia",distance_route_aux_2)
 		print("ruta",self.route,"distancia",self.distance_route)
@@ -169,7 +172,7 @@ class deposito(): #El deposito cuenta con una capacidad maxima de vehiculos que 
 		# for i in self.lugares:
 		# 	if (len(i)<= 8):	
 		# 		lugares_disponibles.append(i)
-		# if(self.lugares==[]):
+		if(self.lugares==[]):
 			print("No hay ningún vehículo al cual ingresar el cliente")
 		elif(self.lugares[0].route==[]):
 			print("agregando cliente al vehículo:",self.lugares[0].code)
@@ -179,7 +182,10 @@ class deposito(): #El deposito cuenta con una capacidad maxima de vehiculos que 
 			#todos los vehiculos disponibles, incluso los que estan vacios. Ademas se puede agregar a vehiculos que estan llenos
 			#falta corregir eso. 
 			print("agregando el cliente ",id_cliente,"al vehiculo:",best_vehicle.code)
-			best_vehicle.add_client(id_cliente)
+			if(best_vehicle.cost_add(id_cliente)==9000):
+				print("no se puede agregar el cliente a ningun vehiculo ya que excede el maximo de tiempo")
+			else:
+				best_vehicle.add_client(id_cliente)
 
 if __name__ == '__main__':
 	clientes={1:1}
