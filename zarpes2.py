@@ -14,13 +14,83 @@ g = {}
 p = []  # guarda las rutas óptimas
 # datos para ruteo
 
+def tsp(vehicle): #el algoritmo tsp recibe una ruta en forma de tupla
+	# print("calculando para el vehiculo",vehicle)
+	# vehicle=list(vehicle)
+	# vehicle.append(1)
+	# vehicle=tuple(vehicle)
+	# print(vehicle)
+	global g
+	global p 
+	finalSolution=[] #para guardar la solucion final
+	for x in vehicle: 
 
-class client:
+			   
+		g[x , ()] = matrix[clientes[x]-1][0]
 
-	def __init__(self, code, destino):
-		self.code = code
-		self.destino = destino
+	VehicleClients=tuple(vehicle)    
 
+		 
+	distance=get_minimum(1, VehicleClients)
+
+
+	solution = p.pop()
+	
+	
+	finalSolution.append(1)
+
+	finalSolution.append(solution[1][0])
+
+	for x in range(len(vehicle) - 1):
+		for new_solution in 	p:
+			if tuple(solution[1]) == new_solution[0]:
+				solution = new_solution
+				#print(solution[1][0], end=', ')
+				finalSolution.append(solution[1][0])
+				break
+
+	# print("solucion final")
+	g = {}
+	p = []
+	return finalSolution,distance
+
+
+def get_minimum(k, a): #calcula camino mínimo entre el nodo k y el set de nodos a
+	
+
+
+	if (k, a) in g:
+
+
+		# Already calculated Set g[%d, (%s)]=%d' % (k, str(a), g[k, a]))
+		return g[k, a]
+
+
+	values=[]
+	all_min=[]
+
+
+	for j in a: #j es el valor de cada cliente y a es el valor de cada sub ruta
+		
+		
+		comunaJ=clientes[j]
+		comunaK=clientes[k]
+
+		set_a = copy.deepcopy(list(a))  
+				 
+		set_a.remove(j)
+
+		all_min.append([j, tuple(set_a)])
+
+		result = get_minimum(j, tuple(set_a))
+
+		valor=values.append(matrix[comunaK-1][comunaJ-1] + result)#costo de ir desde k a j + la distancia más corta en ir a j y pasar por el anterior set_a
+
+	g[k, a] = min(values)
+	p.append(((k, a), all_min[values.index(g[k, a])]))
+
+
+	return g[k, a]
 
 class vehicle:
 
@@ -33,19 +103,28 @@ class vehicle:
 
 	def cost_add(self,client):#Revisar esto
 
-		route_aux = copy.copy(self.route)
 		route_aux_2 = copy.copy(self.route)
 		route_aux_2.append(client)
-		distance_route_aux = tsp(route_aux)[1]
-		distance_route_aux_2 = tsp(route_aux_2)[1]
-		cost = distance_route_aux_2 - distance_route_aux
+		route_aux_2,distance_route_aux_2 = tsp(route_aux_2)
+		cost = distance_route_aux_2 - self.distance_route
+		print("se calcula para el vehiculo",self.code)
+		print("route_aux_2",route_aux_2,"distancia",distance_route_aux_2)
+		print("ruta",self.route,"distancia",self.distance_route)
+		print("costo",cost)
+		print("-----------------")
+	
 		return cost
 
 	def add_client(self,client):
 		self.route.append(client)
+		print("se agrega el mejor cliente que es:",client,"la ruta ahora es",self.route)
 		self.capacity = self.capacity - 1
-		self.distance_route = tsp(self.route)[1]
-		self.route = tsp(self.route)[0]
+		self.route,self.distance_route = tsp(self.route)
+		if (1 in self.route):
+			self.route.remove(1)
+		print("la mejor ruta es:",self.route)
+		print("el costo es:",self.distance_route)
+		
 
 	def remove_client(self,client):
 		if(client not in self.route):
@@ -55,102 +134,55 @@ class vehicle:
 			distance_route = tsp(self.route)[1]
 
 
-class deposito():
+class deposito(): #El deposito cuenta con una capacidad maxima de vehiculos que puede almacenar y el lugar de los vehiculos. 
 
 	def __init__(self, capacity):
-		self.capacity = capacity
-		self.lugares = []
+		self.capacity = capacity #capacidad maxima de almacenamiento
+		self.lugares = [] #Almacena vehiculos en forma de objeto 
 
-	def view_depot(self):
+	def view_depot(self):  #Muestra vehiculos en el deposito y sus rutas
 		for v in self.lugares:
-			print("Vehículo ", v.code, ":")
-			for c in v.route:
-				print(c)
+			print("Vehículo ", v.code, ":",v.route)
+			
 
-	def add_vehicle(self,v):
+	def add_vehicle(self,v): #Agrega el vehiculo que recibe como input a self.lugares.
 		if(len(self.lugares) == 5):
 			print("no hay espacio disponible")
-		else:
-			print("se agregó el vehículo",v)
+		else:			
 			self.lugares.append(v)
+			print("se agregó el vehículo",v.code)
 
-	def remove_vehicle(self,v):
-		if(v not in lugares):
+	def remove_vehicle(self,v): #Elimina el vehiculo que recibe como input de self.lugares
+		v2=0
+		for vehicle in self.lugares:
+			print(vehicle.code,v)
+			if(vehicle.code==str(v)):
+				v2=vehicle				
+		if(v2==0):
 			print("el vehiculo no esta en el deposito")
 		else:
-			lugares.remove(v)
+			self.lugares.remove(v2)
 
-	def add_cliente(self,id_cliente):
-		if(self.lugares[0].route==[]):
+	def add_cliente(self,id_cliente): #Si hay solo un vehiculo en self.lugares entonces lo agrega a el, en caso contrario revisa cual es 
+									  # el vehiculo que recibe el menor impacto al agregar el cliente seleccionado y lo agrega ahi.
+		# lugares_disponibles=[]
+		# for i in self.lugares:
+		# 	if (len(i)<= 8):	
+		# 		lugares_disponibles.append(i)
+		# if(self.lugares==[]):
+			print("No hay ningún vehículo al cual ingresar el cliente")
+		elif(self.lugares[0].route==[]):
+			print("agregando cliente al vehículo:",self.lugares[0].code)
 			self.lugares[0].add_client(id_cliente)
 		else:
-			best_vehicle = min(self.lugares, key=lambda x: x.cost_add(id_cliente))
+			best_vehicle = min(self.lugares, key=lambda x: x.cost_add(id_cliente)) #Falta arreglar esta funcion, ya que revisa todos
+			#todos los vehiculos disponibles, incluso los que estan vacios. Ademas se puede agregar a vehiculos que estan llenos
+			#falta corregir eso. 
+			print("agregando el cliente ",id_cliente,"al vehiculo:",best_vehicle.code)
 			best_vehicle.add_client(id_cliente)
 
-
-def tsp(vehicle):  # el algoritmo tsp recibe una ruta en forma de tupla
-	#   print("calculando para el vehiculo",vehicle)
-
-	finalSolution = []  # para guardar la solucion final
-	for x in vehicle:
-		g[x, ()] = matrix[x.destino - 1][0]
-
-	VehicleClients = tuple(vehicle)
-
-	distance = get_minimum(1, VehicleClients)
-
-	solution = p.pop()
-
-	finalSolution.append(1)
-
-	finalSolution.append(solution[1][0])
-
-	for x in range(len(vehicle) - 1):
-		for new_solution in p:
-			if tuple(solution[1]) == new_solution[0]:
-				solution = new_solution
-				# print(solution[1][0], end=', ')
-				finalSolution.append(solution[1][0])
-				break
-
-	return finalSolution, distance
-
-
-def get_minimum(k, a):  # calcula camino mínimo entre el nodo k y el set de nodos a
-
-	if (k, a) in g:
-
-		# Already calculated Set g[%d, (%s)]=%d' % (k, str(a), g[k, a]))
-		return g[k, a]
-
-	values = []
-	all_min = []
-
-	for j in a:  # j es el valor de cada cliente y a es el valor de cada sub ruta
-		print("j,a",j,a)	
-		comunaJ = j.destino
-		comunaK = k.destino
-
-		set_a = copy.deepcopy(list(a))
-
-		set_a.remove(j)
-
-		all_min.append([j, tuple(set_a)])
-
-		result = get_minimum(j, tuple(set_a))
-
-		# costo de ir desde k a j + la distancia más corta en ir a j y pasar
-		# por el anterior set_a
-		values.append(matrix[comunaK - 1][comunaJ - 1] + result)
-
-	g[k, a] = min(values)
-	p.append(((k, a), all_min[values.index(g[k, a])]))
-
-	return g[k, a]
-
-
 if __name__ == '__main__':
-
+	clientes={1:1}
 	continuar = 1
 	depot = deposito(5)
 	while(continuar != 0):
@@ -166,11 +198,12 @@ if __name__ == '__main__':
 
 		if(opcion == 1):
 			print("Ingrese codigo cliente")
-			idd = input()
+			idd = int(input())
 			print("Ingrese comuna destino")
 			destino = int(input())
-			cliente=client(idd,destino)
-			depot.add_cliente(cliente)
+			clientes[idd]=destino
+			# print(clientes)
+			depot.add_cliente(idd)
 
 
 		if(opcion == 2):
@@ -193,9 +226,9 @@ if __name__ == '__main__':
 		if(opcion==5):
 			depot.view_depot()
 
-
-
-
-		if(opcion == str(0)):
+		if(opcion == 0):
+			print("saliendo")
 			break
+
+
 		

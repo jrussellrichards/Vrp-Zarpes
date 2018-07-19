@@ -45,7 +45,12 @@ class vehicle:
 
 def tsp(vehicle): #el algoritmo tsp recibe una ruta en forma de tupla
 #   print("calculando para el vehiculo",vehicle)
-	
+	# vehicle=list(vehicle)
+	# vehicle.append(1)
+	# vehicle=tuple(vehicle)
+	# print(vehicle)
+	print("g,p",g,p)
+
 	finalSolution=[] #para guardar la solucion final
 	for x in vehicle: 
 
@@ -73,7 +78,7 @@ def tsp(vehicle): #el algoritmo tsp recibe una ruta en forma de tupla
 				finalSolution.append(solution[1][0])
 				break
 
-	
+	# print("solucion final")
 	return finalSolution,distance
 
 
@@ -209,48 +214,63 @@ def llenar(idd):#agrega el cliente al vehículo que de la menor distancia
 if __name__ == '__main__':
 
 	# clientes=(2,3,4)
-	clientes={1:1}
+	clientes={1:1}#por el deposito
 	continuar=1
 	isFull=0
 	distanceMin=0
 	aux=0
-	print("agregue cliente")
-	while(continuar==1):
-		
-		
-		idd = int(input())
-		destino= int(input())
-		clientes[idd]=destino
-		archivo_log.write("\n"+"Nuevo cliente, su id es: "+str(idd)+" y el destino:"+str(destino)+'\n')
-		
-		
+	while(continuar != 0):
 
-		for pos,i in enumerate(vehicles):
+		print("¿Que desea hacer?")
+		print("1: Ingresar cliente")
+		print("2: Ingresar vehiculo")
+		print("3: Quitar vehiculo")
+		print("4: Quitar cliente")
+		print("5: Ver depósito")
+		print("0: Salir")
+		opcion = int(input())
+		if(opcion==0):
+			continuar=0	
+		if(opcion==1):
+			# print("g,p",g,p)
+			print("ingrese el número de cliente")
+			idd = int(input())
+			print("ingrese el destino de cliente")
+			destino= int(input())
+			clientes[idd]=destino
+			archivo_log.write("\n"+"Nuevo cliente, su id es: "+str(idd)+" y el destino:"+str(destino)+'\n')
+			
 			
 
-			if(i==[]):
-				i.append(idd)
-				archivo_log.write("se agrego el cliente al vehiculo"+str(deposito[0])+'\n')
-				print("agregado el cliente",idd, "al vehículo",pos+1)
-				#print(vehicles)
-				isFull=0
-				break
-			else:
-				isFull=1    
+			for pos,i in enumerate(vehicles):
+				
 
-		if(isFull==1): 
-			llenar(idd)
+				if(i==[]):
 
-		print("agregar otro?")
-		continuar=int(input())
+					i.append(idd)
+					# tsp(tuple(i))					esto da error. Creo que es porque se eliminan dos iguales seguidos
+					archivo_log.write("se agrego el cliente al vehiculo"+str(deposito[0])+'\n')
+					print("agregado el cliente",idd, "al vehículo",pos+1)
+					#print(vehicles)
+					isFull=0
+					break
+				else:
+					isFull=1    
+
+			if(isFull==1): 
+				llenar(idd)
+
+
+
+
 
 
 
 	for i,v in enumerate(vehicles):
-
+		
 
 		if(v!=[]):
-
+		
 			ruta=tsp(tuple(v))
 			g = {}
 			p = [] 

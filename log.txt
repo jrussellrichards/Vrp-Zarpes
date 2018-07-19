@@ -1,0 +1,13 @@
+La matriz de distancia es:
+[0, 2, 9, 10]
+[0, 0, 6, 4]
+[0, 7, 0, 8]
+[0, 12, 12, 0]
+Por otro lado la matriz de adyacencia es:
+[1, 1, 1, 1]
+[1, 1, 1, 1]
+[1, 1, 1, 1]
+[1, 1, 1, 1]
+
+Nuevo cliente, su id es: 2 y el destino:2
+se agrego el cliente al vehiculo80
