@@ -8,6 +8,7 @@ matrixComuna = matrices["adjacency"]
 matrix = matrices["distances"]
 
 
+
 # guarda la distancia mínima entre rutas ej: (1,(2,3,4)):3 , el valor
 # mínimo desde ir de 1 y pasar por 2 3 y 4
 g = {}
@@ -96,7 +97,7 @@ class vehicle:
 
 	def __init__(self, code):
 		self.code = code
-		self.capacity = 8
+		self.capacity = 5
 		self.avaible = True
 		self.route = []
 		self.distance_route = 0
@@ -107,14 +108,17 @@ class vehicle:
 		route_aux_2.append(client)
 		route_aux_2,distance_route_aux_2 = tsp(route_aux_2)
 		cost = distance_route_aux_2 - self.distance_route
-		if(distance_route_aux_2>15):
-			cost=9000
-		print("costo:",cost)
-		print("se calcula para el vehiculo",self.code)
-		print("route_aux_2",route_aux_2,"distancia",distance_route_aux_2)
-		print("ruta",self.route,"distancia",self.distance_route)
-		print("costo",cost)
-		print("-----------------")
+		last_client=route_aux_2[-1]
+		# print("last_cliet",last_client)
+		time_travel=copy.copy(distance_route_aux_2)-matrix[clientes[last_client]-1][0]
+		# print("time_travel",time_travel)
+		if(time_travel>60 or self.capacity==0):
+			cost=9000		
+		# print("costo:",cost)
+		# print("se calcula para el vehiculo",self.code)
+		# print("route_aux_2",route_aux_2,"distancia",distance_route_aux_2)
+		# print("ruta",self.route,"distancia",self.distance_route)		
+		# print("-----------------")
 	
 		return cost
 
@@ -183,7 +187,8 @@ class deposito(): #El deposito cuenta con una capacidad maxima de vehiculos que 
 			#falta corregir eso. 
 			print("agregando el cliente ",id_cliente,"al vehiculo:",best_vehicle.code)
 			if(best_vehicle.cost_add(id_cliente)==9000):
-				print("no se puede agregar el cliente a ningun vehiculo ya que excede el maximo de tiempo")
+				print("no se puede agregar el cliente a ningun vehiculo ya que excede el maximo de tiempo o todos los vehiculos estan llenos")
+			
 			else:
 				best_vehicle.add_client(id_cliente)
 
@@ -233,6 +238,7 @@ if __name__ == '__main__':
 			depot.view_depot()
 
 		if(opcion == 0):
+			depot.view_depot()
 			print("saliendo")
 			break
 
