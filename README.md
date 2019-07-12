@@ -20,7 +20,7 @@ Se trata cada vehículo como un TSP (Traveling Salesman Problem) y no como un vr
   
 ## Tecnología y técnicas utilizada:
 
--Python
--POO
--Programación dinámica
--Json
+* Python
+* POO
+* Programación dinámica
+* Json
